@@ -35,28 +35,37 @@
 ## 安裝指南
 
 ### 前置需求
-- Python 3.10 或更高版本
-- Windows 10/11（支援右鍵選單功能；命令列介面支援跨平台 macOS/Linux）
+- Python 3.10 或更高版本（跨平台支援 Windows、macOS 與 Linux）
 
 ### 安裝步驟
-1. 複製 (Clone) 或下載此專案：
-   ```bash
-   git clone https://github.com/your-username/pdf-to-md.git
-   cd pdf-to-md
-   ```
 
-2. 安裝必要依賴套件：
-   ```bash
-   pip install -r requirements.txt
-   ```
+#### 🪟 Windows 使用者：
+```bash
+git clone https://github.com/your-username/pdf-to-md.git
+cd pdf-to-md
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+#### 🍎 macOS / Linux 使用者：
+```bash
+git clone https://github.com/your-username/pdf-to-md.git
+cd pdf-to-md
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
 
 ---
 
-## Windows 右鍵選單設定 (檔案總管整合)
+## 快速操作方式 (Windows & macOS)
+
+### 🪟 Windows 右鍵選單設定 (檔案總管)
 
 在 Windows 檔案總管中，對任何 PDF 按右鍵即可直接轉換：
 
-### 1-鍵快速安裝
+#### 1-鍵快速安裝
 在專案目錄下雙擊 `install_context_menu.bat`，或在終端機執行：
 ```bash
 python setup_context_menu.py --install
@@ -66,15 +75,33 @@ python setup_context_menu.py --install
 - **背景無感靜默執行**：使用 `pythonw.exe` 執行，螢幕不會閃爍彈出黑色的命令提示字元視窗。
 - **自動產出同目錄**：直接在該 PDF 的同目錄下生成 `<檔案名稱>.md`。
 
-### 解除安裝
+#### 解除安裝
 雙擊 `uninstall_context_menu.bat`，或執行：
 ```bash
 python setup_context_menu.py --uninstall
 ```
 
+### 🍎 macOS 使用者整合方式
+
+1. **VS Code 快捷鍵（最簡單跨平台方式）**：
+   - 用 VS Code 開啟此專案。
+   - 開啟或點擊任何 PDF 檔案，按下 **`Cmd + Shift + B`**，即可直接在同目錄生成 `.md`。
+2. **Mac Finder 右鍵快速動作 (Automator / 捷徑)**：
+   - 開啟 Mac 內建的「**Automator (自動操作)**」App，選擇「**快速動作 (Quick Action)**」。
+   - 設定「工作流程收到目前的：**PDF 檔案**」於「**Finder**」。
+   - 加入動作「**執行 Shell 工序指令 (Run Shell Script)**」，傳遞輸入選擇「**作為引數 (as arguments)**」：
+     ```bash
+     for f in "$@"; do
+         /usr/bin/python3 "/完整路徑/pdf_to_md.py" "$f"
+     done
+     ```
+   - 儲存為「**轉換為 Markdown**」即可在 Finder 右鍵選單的「快速動作」中一鍵轉換。
+
 ---
 
 ## 命令列 (CLI) 使用說明
+
+> 💡 **提示**：Windows 請使用 `python`，macOS / Linux 使用者請使用 `python3`（或在啟用虛擬環境下執行）。
 
 ### 1. 基本轉換
 將 PDF 轉換為同目錄下的 Markdown (`document.pdf` -> `document.md`)：

@@ -35,28 +35,37 @@ Designed for individuals, researchers, and enterprises handling sensitive docume
 ## Installation
 
 ### Prerequisites
-- Python 3.10 or higher
-- Windows 10/11 (for context menu features; CLI works cross-platform)
+- Python 3.10 or higher (cross-platform support for Windows, macOS, and Linux)
 
 ### Setup
-1. Clone or download this repository:
-   ```bash
-   git clone https://github.com/your-username/pdf-to-md.git
-   cd pdf-to-md
-   ```
 
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+#### 🪟 Windows:
+```bash
+git clone https://github.com/your-username/pdf-to-md.git
+cd pdf-to-md
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+#### 🍎 macOS / Linux:
+```bash
+git clone https://github.com/your-username/pdf-to-md.git
+cd pdf-to-md
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
 
 ---
 
-## Windows Explorer Context Menu Setup
+## Quick Usage Workflow (Windows & macOS)
+
+### 🪟 Windows Context Menu Integration
 
 Convert any PDF with a single right-click in Windows Explorer:
 
-### 1-Click Install
+#### 1-Click Install
 Double-click `install_context_menu.bat` or run:
 ```bash
 python setup_context_menu.py --install
@@ -66,15 +75,33 @@ python setup_context_menu.py --install
 - **Silent Background Execution**: Runs via `pythonw.exe`, so no intrusive command prompt window flashes on your screen.
 - **Output Location**: Generates `<filename>.md` directly in the same folder as the right-clicked PDF.
 
-### Uninstallation
+#### Uninstallation
 Double-click `uninstall_context_menu.bat` or run:
 ```bash
 python setup_context_menu.py --uninstall
 ```
 
+### 🍎 macOS Integration Options
+
+1. **VS Code Task (Easiest Cross-Platform)**:
+   - Open this repo in VS Code.
+   - Open or focus on any `.pdf` file and press **`Cmd + Shift + B`** to generate `<filename>.md`.
+2. **Mac Finder Quick Action (via Automator)**:
+   - Open **Automator**, select **Quick Action**.
+   - Set workflow receives current: **PDF files** in **Finder**.
+   - Add action **Run Shell Script**, set Pass input: **as arguments**:
+     ```bash
+     for f in "$@"; do
+         /usr/bin/python3 "/path/to/pdf_to_md.py" "$f"
+     done
+     ```
+   - Save as `Convert to Markdown` to enable right-click Quick Action in Finder.
+
 ---
 
 ## Command-Line Interface (CLI) Usage
+
+> 💡 **Tip**: Use `python` on Windows and `python3` on macOS / Linux (or run within the activated virtual environment).
 
 ### 1. Basic Conversion
 Convert a PDF to Markdown in the same directory (`document.pdf` -> `document.md`):
