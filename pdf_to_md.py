@@ -36,10 +36,34 @@ def patch_rapidocr_none_safety():
         pass
 
 
+def clean_markdown_output(text: str, page_separators: bool = False) -> str:
+    """
+    Clean common OCR artifacts and format page separators.
+    - Standardizes page delimiters into clean Markdown headers.
+    - Fixes words broken by spurious strikethrough (~~) caused by intersecting scan/table lines.
+    """
+    import re
+
+    if page_separators:
+        text = re.sub(
+            r'---\s*end of page\.page_number=(\d+)\s*---',
+            r'\n\n---\n*Page \1*\n\n',
+            text
+        )
+
+    # Merge words broken by false-positive strikethrough artifacts from line intersection
+    text = re.sub(r'(\b\w+)\s*~~(\w+)~~\s*(\w+\b)', r'\1\2\3', text)
+    text = re.sub(r'~~(\w+)~~\s*(\w+\b)', r'\1\2', text)
+    text = re.sub(r'(\b\w+)\s*~~(\w+)~~', r'\1\2', text)
+    return text
+
+
 def convert_with_pymupdf4llm(
     pdf_path: str,
     write_images: bool = False,
-    image_path: Optional[str] = None
+    image_path: Optional[str] = None,
+    force_ocr: bool = False,
+    page_separators: bool = False
 ) -> str:
     """Convert PDF to Markdown using PyMuPDF4LLM with local OCR support."""
     patch_rapidocr_none_safety()
@@ -50,17 +74,22 @@ def convert_with_pymupdf4llm(
         kwargs["write_images"] = True
         if image_path:
             kwargs["image_path"] = image_path
+    if force_ocr:
+        kwargs["force_ocr"] = True
+    if page_separators:
+        kwargs["page_separators"] = True
 
     try:
         content = pymupdf4llm.to_markdown(pdf_path, **kwargs)
-        return content
+        return clean_markdown_output(content, page_separators=page_separators)
     except TypeError as e:
         # If OCR fails on edge case, retry without image OCR
         logger.warning(f"OCR parsing exception: {e}. Retrying with plain text extraction...")
         import fitz
         doc = fitz.open(pdf_path)
         pages_text = [page.get_text() for page in doc]
-        return "\n\n".join(pages_text)
+        raw_text = "\n\n".join(pages_text)
+        return clean_markdown_output(raw_text, page_separators=page_separators)
 
 
 def convert_with_markitdown(pdf_path: str) -> str:
@@ -75,7 +104,9 @@ def convert_pdf_to_md(
     pdf_path: str,
     output_path: Optional[str] = None,
     engine: str = "auto",
-    write_images: bool = False
+    write_images: bool = False,
+    force_ocr: bool = False,
+    page_separators: bool = False
 ) -> str:
     """
     Convert a single PDF file to Markdown.
@@ -84,6 +115,8 @@ def convert_pdf_to_md(
     :param output_path: Destination path for .md file. Defaults to same directory as PDF.
     :param engine: 'auto', 'pymupdf4llm', or 'markitdown'.
     :param write_images: Whether to extract and save images locally.
+    :param force_ocr: Force OCR on all pages.
+    :param page_separators: Insert page/slide dividers in Markdown.
     :return: The converted markdown file path.
     """
     if not os.path.exists(pdf_path):
@@ -115,7 +148,13 @@ def convert_pdf_to_md(
             logger.info(f"Attempting conversion using engine '{eng_name}'...")
             if eng_name == "pymupdf4llm":
                 img_dir = os.path.join(base_dir, f"{file_stem}_images") if write_images else None
-                content = eng_func(pdf_path, write_images=write_images, image_path=img_dir)
+                content = eng_func(
+                    pdf_path,
+                    write_images=write_images,
+                    image_path=img_dir,
+                    force_ocr=force_ocr,
+                    page_separators=page_separators
+                )
             else:
                 content = eng_func(pdf_path)
             if content is not None:
@@ -181,6 +220,16 @@ def parse_args():
         "--extract-images",
         action="store_true",
         help="Extract and save embedded images to a local folder.",
+    )
+    parser.add_argument(
+        "--force-ocr",
+        action="store_true",
+        help="Force OCR processing on all pages and embedded images.",
+    )
+    parser.add_argument(
+        "--page-separators",
+        action="store_true",
+        help="Insert page/slide break dividers in output markdown.",
     )
     parser.add_argument(
         "-v", "--verbose",
@@ -255,7 +304,9 @@ def main():
                 pdf_path=input_pdf,
                 output_path=target_output,
                 engine=args.engine,
-                write_images=args.extract_images
+                write_images=args.extract_images,
+                force_ocr=args.force_ocr,
+                page_separators=args.page_separators
             )
             if not args.quiet:
                 print(f"[+] Converted: {input_pdf} -> {out_file}")

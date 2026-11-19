@@ -129,11 +129,24 @@ Extract embedded document images into a dedicated subfolder alongside the markdo
 python pdf_to_md.py --extract-images report.pdf
 ```
 
-### 5. CLI Options Reference
+### 5. Force Comprehensive OCR
+Force OCR execution across all pages and embedded figures/tables:
+```bash
+python pdf_to_md.py --force-ocr slides.pdf
+```
+
+### 6. Retain Slide / Page Dividers
+Insert clear page break dividers and page number indicators (`--- \n*Page N*`):
+```bash
+python pdf_to_md.py --page-separators slides.pdf
+```
+
+### 7. CLI Options Reference
 
 ```text
 usage: pdf_to_md.py [-h] [-o OUTPUT] [--engine {auto,pymupdf4llm,markitdown}]
-                    [--extract-images] [-v] [-q] [--version]
+                    [--extract-images] [--force-ocr] [--page-separators] [-v]
+                    [-q] [--version]
                     [inputs ...]
 
 positional arguments:
@@ -145,6 +158,8 @@ options:
   --engine {auto,pymupdf4llm,markitdown}
                         Engine preference (default: auto, prefers pymupdf4llm).
   --extract-images      Extract and save embedded images locally.
+  --force-ocr           Force OCR processing on all pages and embedded images.
+  --page-separators     Insert page/slide break dividers in output markdown.
   -v, --verbose         Enable detailed logging output.
   -q, --quiet           Suppress non-error console output.
   --version             Show program's version number and exit.

@@ -129,11 +129,24 @@ python pdf_to_md.py report1.pdf report2.pdf thesis.pdf
 python pdf_to_md.py --extract-images report.pdf
 ```
 
-### 5. CLI 參數一覽
+### 5. 強制完整 OCR（掃描講義、圖片投影片）
+若文件含有大量拍照講義、掃描表格或插圖投影片，可加上 `--force-ocr` 強制所有頁面進行深度文字辨識：
+```bash
+python pdf_to_md.py --force-ocr slides.pdf
+```
+
+### 6. 保留分頁標籤（投影片／多頁手冊）
+在每頁之間自動插入 Markdown 分隔線與頁碼註記（`--- \n*Page N*`）：
+```bash
+python pdf_to_md.py --page-separators slides.pdf
+```
+
+### 7. CLI 參數一覽
 
 ```text
 usage: pdf_to_md.py [-h] [-o OUTPUT] [--engine {auto,pymupdf4llm,markitdown}]
-                    [--extract-images] [-v] [-q] [--version]
+                    [--extract-images] [--force-ocr] [--page-separators] [-v]
+                    [-q] [--version]
                     [inputs ...]
 
 positional arguments:
@@ -145,6 +158,8 @@ options:
   --engine {auto,pymupdf4llm,markitdown}
                         指定轉換引擎 (預設 auto: 優先使用 pymupdf4llm)
   --extract-images      提取並儲存 PDF 內嵌圖片至本地
+  --force-ocr           強制對所有頁面與圖片執行深度 OCR 文字辨識
+  --page-separators     在輸出 Markdown 中插入簡報／頁面分隔標記
   -v, --verbose         顯示詳細除錯記錄
   -q, --quiet           靜默模式 (僅在錯誤時輸出)
   --version             顯示程式版本
