@@ -1,0 +1,9 @@
+# Core engine for PDF-to-Markdown conversion with layout, table, and image extraction
+pymupdf4llm>=0.0.17
+pymupdf>=1.24.0
+
+# General document conversion framework (optional / multi-format fallback)
+markitdown>=0.0.1a4
+
+# Local OCR engine for scanned/raster PDFs and embedded images (100% offline, zero API cost)
+rapidocr-onnxruntime>=1.2.3
