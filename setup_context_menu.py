@@ -55,7 +55,7 @@ def generate_reg_files(pythonw: str, target_script: str, menu_name: str = DEFAUL
         "[-HKEY_CURRENT_USER\\Software\\Classes\\SystemFileAssociations\\.pdf\\shell\\ConvertToMarkdown]\r\n"
     )
 
-    add_reg_path = os.path.join(script_dir, "add_pdf_to_md_context.reg")
+    add_reg_path = os.path.join(script_dir, "add_pdf_to_md_context_local.reg")
     remove_reg_path = os.path.join(script_dir, "remove_pdf_to_md_context.reg")
 
     with open(add_reg_path, "w", encoding="utf-8") as f:

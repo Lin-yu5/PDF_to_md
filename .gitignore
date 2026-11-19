@@ -43,6 +43,8 @@ pdf_to_md.log
 temp/
 test_sample.md
 scanned_test.md
+*_images/
+*_local.reg
 
 # Operating System files
 .DS_Store
