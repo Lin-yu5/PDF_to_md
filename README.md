@@ -1,5 +1,7 @@
 # PDF to Markdown Converter (Local & Privacy-First)
 
+[English](README.md) | [繁體中文](README_zh.md)
+
 A lightweight, high-performance, and privacy-preserving tool to convert PDF documents into clean, LLM-ready GitHub-Flavored Markdown (GFM).
 
 Designed for individuals, researchers, and enterprises handling sensitive documents who want **100% offline processing**, **zero cloud API costs**, and **seamless Windows desktop integration**.
@@ -144,7 +146,8 @@ options:
 ├── requirements.txt            # Dependency specification
 ├── .gitignore                  # Git ignore rules
 ├── LICENSE                     # MIT License
-└── README.md                   # Documentation
+├── README.md                   # Documentation (English)
+└── README_zh.md                # Documentation (Traditional Chinese)
 ```
 
 ---
